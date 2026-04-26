@@ -311,7 +311,7 @@ canvas{display:block;width:100vw;height:100vh;cursor:crosshair;}
 <!-- Leaderboard -->
 <div class="screen" id="leaderboardScreen" style="display:none">
   <div class="lb-title">🏆 YÜKSEK SKORLAR</div>
-  <div style="font-size:10px;color:#666;letter-spacing:2px;margin-bottom:8px;">4-4 SONSUZ MOD — DÜNYA SIRALAMASI</div>
+  <div style="font-size:10px;color:#666;letter-spacing:2px;margin-bottom:8px;">TÜM MODLAR — DÜNYA SIRALAMASI</div>
   <div class="lb-list" id="lbList"><div style="color:#444;font-size:12px;padding:20px;">Yükleniyor...</div></div>
   <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;justify-content:center;">
     <button class="btn btn-gold" id="lbPlayEndless">⚔ SONSUZ MODA BAŞLA</button>
@@ -2724,7 +2724,7 @@ function triggerGameOver(){
       document.getElementById('playerNameInput').focus();
       document.getElementById('neSubmitBtn').onclick=async()=>{
         const name=(document.getElementById('playerNameInput').value||'').trim().substring(0,16)||'ANONİM';
-        await submitScore(name,scoredThisRun,gs.wave,pd.char);
+        await submitScore(name,scoredThisRun,gs.wave,pd.char,gs.chapter?gs.chapter.id:null);
         document.getElementById('nameEntryScreen').style.display='none';
         showLeaderboard(false);
       };
@@ -2915,10 +2915,11 @@ function showNameEntry(){
   };
 }
 
-async function submitScore(name,score,wave,char){
+async function submitScore(name,score,wave,char,chapter){
   try{
     if(!window._fbDb)return;
     const entry={name,score,wave,
+      chapter:chapter||null,
       skin:char.skin,hairStyle:char.hairStyle,hairColor:char.hairColor,kitIndex:char.kitIndex,
       ts:Date.now()
     };
@@ -2959,7 +2960,7 @@ function showLeaderboard(fromEndless){
       rankEl.textContent=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.';
       const nameEl=document.createElement('div');nameEl.className='lb-name';nameEl.textContent=row.name||'ANONİM';
       const scoreEl=document.createElement('div');scoreEl.style.cssText='text-align:right;';
-      scoreEl.innerHTML=`<div class="lb-score">${(row.score||0).toLocaleString()}</div><div class="lb-wave">DALGA ${row.wave||0}</div>`;
+      scoreEl.innerHTML=`<div class="lb-score">${(row.score||0).toLocaleString()}</div><div class="lb-wave">${row.chapter?'BÖLÜM '+row.chapter:'DALGA '+row.wave||0}</div>`;
       div.insertBefore(rankEl,div.firstChild);
       div.appendChild(nameEl);div.appendChild(scoreEl);
       list.appendChild(div);
