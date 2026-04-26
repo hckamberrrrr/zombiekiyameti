@@ -2714,9 +2714,23 @@ function triggerGameOver(){
   if(scoredThisRun>0){
     saveBtn.style.display='block';
     saveBtn.onclick=()=>{
-      pd.score+=scoredThisRun;
-      showNameEntry();
-      pd.score-=scoredThisRun;
+      document.getElementById('gameOverScreen').style.display='none';
+      hideAllScreens();
+      document.getElementById('neScoreText').textContent='SKOR: '+scoredThisRun.toLocaleString()+' | BÖLÜM: '+(gs.chapter?gs.chapter.id:'?');
+      drawCharacterOnCanvas(document.getElementById('neAvatarCanvas'),pd.char,2.5);
+      document.getElementById('nameEntryScreen').style.display='flex';
+      document.getElementById('playerNameInput').value='';
+      document.getElementById('playerNameInput').focus();
+      document.getElementById('neSubmitBtn').onclick=async()=>{
+        const name=(document.getElementById('playerNameInput').value||'').trim().substring(0,16)||'ANONİM';
+        await submitScore(name,scoredThisRun,gs.wave,pd.char);
+        document.getElementById('nameEntryScreen').style.display='none';
+        showLeaderboard(false);
+      };
+      document.getElementById('neSkipBtn').onclick=()=>{
+        document.getElementById('nameEntryScreen').style.display='none';
+        showChapterSelect();
+      };
     };
   } else {
     saveBtn.style.display='none';
